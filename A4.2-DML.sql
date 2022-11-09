@@ -15,7 +15,7 @@ SELECT clientes.nombre
 FROM clientes
 LEFT JOIN factura ON clientes.idcliente = factura.idcliente
 GROUP BY clientes.nombre
-HAVING  MAX(factura.fechaalta) < '2012-07-01';
+HAVING MAX(factura.fechaalta) < '2012-07-01';
 #Listado de los clientes que han comprado el producto resistencia. Si se repiten consigue que solo salga una vez cada uno. No sabes el id de la resistencia, solo el nombre.
 SELECT DISTINCT clientes.nombre
 FROM clientes
@@ -68,5 +68,18 @@ FROM productos
 WHERE precio > (SELECT AVG(precio) FROM productos)
 ORDER BY precio DESC;
 #¿Cuántos productos nos han comprado cada cliente durante el último semestre del 2012? Muestra solo los que hayan comprado 40 productos o más.
-
+SELECT clientes.nombre, SUM(lineasfra.idunidades) AS 'Productos Comprados'
+FROM clientes
+LEFT JOIN factura ON clientes.idcliente = factura.idcliente 
+LEFT JOIN lineasfra ON factura.idfactura = lineasfra.idfactura
+WHERE factura.fechaalta > '2012-06-01' AND factura.fechaalta < '2013-01-01'
+GROUP BY clientes.nombre
+HAVING SUM(lineasfra.idunidades) >= 40;
 #Para cada cliente, haz un listado con todos los productos y los proveedores de los productos que han comprado. ¡Ánimo, es la última!
+SELECT clientes.nombre AS 'Nombre Cliente', productos.nombre AS 'Nombre Producto', proveedor.nombre AS 'Nombre Proveedor'
+FROM clientes
+LEFT JOIN factura ON clientes.idcliente = factura.idcliente
+LEFT JOIN lineasfra ON factura.idfactura = lineasfra.idfactura
+LEFT JOIN productos ON lineasfra.idproducto = productos.idproducto 
+LEFT JOIN proveen ON productos.idproducto = proveen.idproducto
+LEFT JOIN proveedor ON proveen.idproveedor = proveedor.idproveedor;
