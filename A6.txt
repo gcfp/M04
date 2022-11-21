@@ -1,0 +1,5 @@
+create keyspace sensordb with replication={'class': 'SimpleStrategy', 'replication_factor': 3};
+use sensordb
+create table networks(name text, description text, region text, num_sensors int, primary key(name));
+create table sensors_by_network(network text, sensor text, latitude decimal, longitude decimal, characteristics map<text,text>, primary key(network, sensor));
+create table temperatures_by_sensor(sensor text, date date, timestamp timestamp, value float, primary key(sensor, (date, timestamp)));
