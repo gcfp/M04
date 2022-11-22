@@ -1,5 +1,41 @@
+1. Crea una red de 3 contenedores de Cassandra
+docker network create cassandra-network
+docker run --network cassandra-network --name cassandra01 -d cassandra:latest
+docker run --network cassandra-network --name cassandra02 -e CASSANDRA_SEEDS=172.18.0.2 -d cassandra:latest
+docker run --network cassandra-network --name cassandra03 -e CASSANDRA_SEEDS=172.18.0.3 -d cassandra:latest
+
+2. Crea la siguiente base de datos en Cassandra
 create keyspace sensordb with replication={'class': 'SimpleStrategy', 'replication_factor': 3};
 use sensordb
 create table networks(name text, description text, region text, num_sensors int, primary key(name));
-create table sensors_by_network(network text, sensor text, latitude decimal, longitude decimal, characteristics map<text,text>, primary key(network, sensor));
-create table temperatures_by_sensor(sensor text, date date, timestamp timestamp, value float, primary key(sensor, (date, timestamp)));
+create table sensors_by_network(network text, sensor text, latitude decimal, longitude decimal, characteristics map<text,text>, primary key((network, sensor)));
+create table temperatures_by_sensor(sensor text, date date, timestamp timestamp, value float, primary key((date, timestamp), sensor));
+
+3. Inserta 5 filas para las 3 tablas
+insert into networks(name, description, region, num_sensors) values ('network01', 'first network', 'spa', 5);
+insert into networks(name, description, region, num_sensors) values ('network02', 'second network', 'fra', 8);
+insert into networks(name, description, region, num_sensors) values ('network03', 'third network', 'deu', 12);
+insert into networks(name, description, region, num_sensors) values ('network04', 'fourth network', 'pol', 3);
+insert into networks(name, description, region, num_sensors) values ('network05', 'fifth network', 'aus', 4);
+
+insert into sensors_by_network(network, sensor, latitude, longitude, characteristics) values ('network01', 'sensor01', 6.23, 5.69, {'color':'white','shape':'square'});
+insert into sensors_by_network(network, sensor, latitude, longitude, characteristics) values ('network02', 'sensor02', 3.23, 9.69, {'color':'brown','shape':'circle'});
+insert into sensors_by_network(network, sensor, latitude, longitude, characteristics) values ('network03', 'sensor03', 5.23, 3.69, {'color':'grey','shape':'rectangular'});
+insert into sensors_by_network(network, sensor, latitude, longitude, characteristics) values ('network04', 'sensor04', 8.23, 1.69, {'color':'red','shape':'square'});
+insert into sensors_by_network(network, sensor, latitude, longitude, characteristics) values ('network05', 'sensor05', 2.23, 4.69, {'color':'blue','shape':'square'});
+
+insert into temperatures_by_sensor(sensor, date, timestamp, value) values ('sensor01', '2022-05-05', '2022-05-05 01:37:15', 23.64);
+insert into temperatures_by_sensor(sensor, date, timestamp, value) values ('sensor02', '2022-07-15', '2022-07-15 01:37:15', 16.64);
+insert into temperatures_by_sensor(sensor, date, timestamp, value) values ('sensor03', '2022-08-09', '2022-08-09 01:37:15', 19.64);
+insert into temperatures_by_sensor(sensor, date, timestamp, value) values ('sensor04', '2022-10-24', '2022-10-24 01:37:15', 12.64);
+insert into temperatures_by_sensor(sensor, date, timestamp, value) values ('sensor05', '2022-11-02', '2022-11-02 01:37:15', 6.64);
+
+4. Haz las siguientes consultas:
+(Q1) Busca la información de todas las redes ordenadas ASC
+select * from netowrks;
+(Q2) Muestra el promedio de la temperatura por día ordenador por sensor DESC
+select AVG(value) from temperatures_by_sensor where date = '2022-05-05' ALLOW FILTERING;
+(Q3) Muestras los sensores de UNA de las redes
+select * from sensors_by_network where network='network01';
+(Q4) Muestra las temperaturas de UN LISTADO de sensores para 3 días consecutivos
+select value from temperatures_by_sensor where date <= '2022-05-04' and date >= '2022-05-06' ALLOW FILTERING;
