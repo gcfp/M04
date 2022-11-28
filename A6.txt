@@ -32,7 +32,7 @@ insert into temperatures_by_sensor(sensor, date, timestamp, value) values ('sens
 
 4. Haz las siguientes consultas:
 (Q1) Busca la información de una de las redes ordenadas ASC
-select * from netowrks where network='network01';
+select * from networks where network='network01';
 (Q2) Muestra el promedio de la temperatura por día ordenado por timestamp DESC
 select avg(value) from temperatures_by_sensor where date in ('2022-05-05', '2022-08-09', '2022-10-24', '2022-11-02') group by date order by timestamp desc;
 (Q3) Muestras los sensores de UNA de las redes
