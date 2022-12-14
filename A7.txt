@@ -1,0 +1,34 @@
+CREATE (Madrid:ciudad{nombre:'Madrid'})
+CREATE (Barrio:area{tipo:'Centro'})
+CREATE (Calles:elementos{tipo:['calles amplias', 'calles estrechas']})
+CREATE (Arboles:decoracion{estado:['más apretados','más juntos'], espacio:'Escaso', color:'Verdes', estacion:['tiernos primavera','amables verano']})
+CREATE (Aceras:elementos{estado:'Recién regadas', calidad:['lujo sin precio', 'placer gratuito']})
+CREATE (Plazas:elementos{cantidad:'Bastantes', tamanyo:'No muy grandes'})
+CREATE (Iglesias:edificios{})
+CREATE (Estatuas:decoracion{})
+CREATE (Figuras:decoracion{tipo:['héroes','santos']})
+CREATE (Bancos:decoracion{})
+CREATE (Columpios:decoracion{})
+CREATE (Vallados:decoracion{objetivo:'Perros', variedad:'Iguales', motivo:'Contrata municipal'})
+CREATE (Callejones:elementos{cantidad:'Pocos', calidad:'Preciosos', objetivo:['enamorados clandestinos','adolescentes']})
+CREATE (Barrio)-[r:ESTA]->(Madrid)
+CREATE (Barrio)-[r2:TIENE]->(Calles)
+CREATE (Barrio)-[r3:TIENE]->(Plazas)
+CREATE (Barrio)-[r4:TIENE]->(Callejones)
+CREATE (Calles)-[r5:TIENE]->(Arboles)
+CREATE (Calles)-[r6:TIENE]->(Aceras)
+CREATE (Plazas)-[r7:TIENE]->(Iglesias)
+CREATE (Plazas)-[r8:TIENE]->(Estatuas)
+CREATE (Plazas)-[r9:TIENE]->(Figuras)
+CREATE (Plazas)-[r10:TIENE]->(Bancos)
+CREATE (Plazas)-[r11:TIENE]->(Columpios)
+CREATE (Plazas)-[r12:TIENE]->(Vallados)
+
+El gráfico al completo
+MATCH (n) RETURN (n)
+El gráfico de todas relaciones de “TIENE” (o el verbo similar que hayas utilizado)
+MATCH p=()-[r:TIENE]->() RETURN p
+Muestra las propiedades de los árboles
+MATCH (n) WHERE ID(n) = 3 RETURN keys(n)
+¿Qué tienen las plazas? Muestra sus relaciones y propiedades
+MATCH (n)-[r]-(m) WHERE ID(n) = 5 RETURN n,r,m
